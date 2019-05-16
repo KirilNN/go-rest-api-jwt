@@ -1,11 +1,9 @@
-FROM golang:1.12.5-alpine3.9
+FROM golang as builder
 
-RUN mkdir /app
+RUN CGO_ENABLED=0 go get -a -ldflags '-s' github.com/KirilNN/go-rest-api-jwt
 
-COPY main.go /app
+FROM scratch
 
-WORKDIR /app
+COPY --from=builder /go/bin/go-rest-api-jwt .
 
-RUN go build -o main .
-
-CMD ["/app/main"]
+CMD ["./go-rest-api-jwt"]
